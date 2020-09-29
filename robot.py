@@ -3,7 +3,7 @@ TODO: You can either work from this skeleton, or you can build on your solution 
 """
 
 # list of valid command names
-valid_commands = ['off', 'help', 'forward', 'back', 'right', 'left', 'sprint']
+valid_commands = ['replay','off', 'help', 'forward', 'back', 'right', 'left', 'sprint']
 
 # variables tracking position and direction
 position_x = 0
@@ -29,10 +29,10 @@ def retrieve_commands():
 
 def do_replay(robot_name):
     global command_list
-    r_commands = [i for i in command_list if i != 'off' and i != 'help']
+    r_commands = [i for i in command_list if i != 'off' and i != 'help' and i != 'replay']
     for i in r_commands:
         handle_command(robot_name, i)
-    return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + 'commands'
+    return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + ' commands.'
     
 
 def get_robot_name():
@@ -54,7 +54,7 @@ def get_command(robot_name):
         output(robot_name, "Sorry, I did not understand '"+command+"'.")
         command = input(prompt)   
     
-    update_c_history(command.lower)
+    update_c_history(command.lower())
     return command.lower()
     
 
