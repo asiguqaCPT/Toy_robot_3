@@ -3,7 +3,7 @@ TODO: You can either work from this skeleton, or you can build on your solution 
 """
 
 # list of valid command names
-valid_commands = ['replay silent','replay','off', 'help', 'forward', 'back', 'right', 'left', 'sprint']
+valid_commands = ['replay reversed','replay silent','replay','off', 'help', 'forward', 'back', 'right', 'left', 'sprint']
 
 # variables tracking position and direction
 position_x = 0
@@ -18,6 +18,10 @@ min_x, max_x = -100, 100
 # Variable to keep track of commands
 command_list = []
 
+# Variable for non movement commands
+non_movement = ['off','help','replay','replay silent','replay reversed']
+replay = ['silent','reversed']
+
 def update_c_history(e_command):
     global command_list
     command_list.append(e_command)
@@ -29,10 +33,18 @@ def retrieve_commands():
 
 def do_replay(robot_name):
     global command_list
-    r_commands = [i for i in command_list if i != 'off' and i != 'help' and i != 'replay']
+    r_commands = [i for i in command_list if i not in non_movement]
     for i in r_commands:
         handle_command(robot_name, i)
     return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + ' commands.'
+
+def do_replay_reversed(robot_name):
+    global command_list
+    r_commands = [i for i in command_list if i not in non_movement]
+    r_commands.reverse()
+    for i in r_commands:
+        handle_command(robot_name, i)
+    return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + ' commands in reverse.'
 
 
 def do_replay_silent(robot_name):
@@ -109,7 +121,7 @@ def valid_command(command):
     """    
     (command_name, arg1) = split_command_input(command) 
         
-    return command_name.lower() in valid_commands and (len(arg1) == 0 or is_int(arg1) or arg1.lower() == 'silent')
+    return command_name.lower() in valid_commands and (len(arg1) == 0 or is_int(arg1) or arg1.lower() in replay)
         
     
 def output(name, message):
@@ -275,6 +287,8 @@ def handle_command(robot_name, command):
         (do_next, command_output) = do_sprint(robot_name, int(arg)) 
     elif arg == 'silent':
         (do_next, command_output) = do_replay_silent(robot_name)
+    elif arg == 'reversed':
+        (do_next, command_output) = do_replay_reversed(robot_name)
     elif command_name == 'replay':
         (do_next, command_output) = do_replay(robot_name)
     print(command_output)
