@@ -20,7 +20,6 @@ command_list = []
 
 def update_c_history(e_command):
     global command_list
-
     command_list.append(e_command)
 
 
@@ -28,8 +27,12 @@ def retrieve_commands():
     return command_list
 
 
-def do_replay():
+def do_replay(robot_name):
     global command_list
+    r_commands = [i for i in command_list if i != 'off' and i != 'help']
+    for i in r_commands:
+        handle_command(robot_name, i)
+    return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + 'commands'
     
 
 def get_robot_name():
@@ -250,7 +253,7 @@ def handle_command(robot_name, command):
     elif command_name == 'sprint':
         (do_next, command_output) = do_sprint(robot_name, int(arg)) 
     elif command_name == 'replay':
-        (do_next, command_output) = do_replay()
+        (do_next, command_output) = do_replay(robot_name)
     print(command_output)
     show_position(robot_name)
     return do_next
