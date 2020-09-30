@@ -31,22 +31,28 @@ def retrieve_commands():
     return command_list
 
 
-def do_replay(robot_name, num):
+def do_replay(robot_name, number_of_replays):
     global command_list
-    if num != '':
-        num = int(num)
+    int_1 = number_of_replays[0]
+    int_2 = number_of_replays[1]
+
     r_commands = [i for i in command_list if i not in non_movement and not i.startswith('replay')]
-    if num == '':
+    if int_1 == 0 and int_2 == '': 
         for i in r_commands:
             handle_command(robot_name, i)
-    else: 
-        r_commands = r_commands[-num:]
+    elif int_1 != 0 and int_2  == '':
+        r_commands = r_commands[-int_1:]
         for i in r_commands:
             handle_command(robot_name, i)
+    elif int_2 != '':
+        r_commands = r_commands[-int_1:-int_2]
+        for i in r_commands:
+            handle_command(robot_name, i)
+        pass
     return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + ' commands.'
         
 
-def do_replay_reversed(robot_name):
+def do_replay_reversed(robot_name, number_of_replays):
     global command_list
     r_commands = [i for i in command_list if i not in non_movement and not i.startswith('replay')]
     r_commands.reverse()
@@ -55,7 +61,7 @@ def do_replay_reversed(robot_name):
     return True,' > ' + robot_name + ' replayed ' + str(len(r_commands)) + ' commands in reverse.'
 
 
-def do_replay_reversed_silent(robot_name):
+def do_replay_reversed_silent(robot_name, number_of_replays):
     global command_list
     r_commands = [i for i in command_list if i not in non_movement and not i.startswith('replay')]
     r_commands.reverse()
@@ -76,7 +82,7 @@ def do_replay_reversed_silent(robot_name):
     return True,' > ' +  robot_name + ' replayed ' + str(len(r_commands)) + ' commands in reverse silently.'
 
 
-def do_replay_silent(robot_name):
+def do_replay_silent(robot_name, number_of_replays):
     global command_list
     r_commands = [i for i in command_list if i not in non_movement and not i.startswith('replay')]
     
@@ -143,6 +149,27 @@ def is_int(value):
         return False
     
 
+def valid_range(c_range):
+    if '-' in c_range:
+        int_1 = c_range[:c_range.index('-')]
+        int_2 = c_range[c_range.index('-')+1:]
+        if is_int(int_1) and is_int(int_2):
+            return True
+    else:
+        return False
+
+
+def number_of_replays(command):
+    n_replay = command.split(' ')
+    if command.startswith('replay') and is_int(n_replay[-1]):
+        return int(n_replay[-1]),''
+    elif command.startswith('replay') and len(n_replay) == 1:
+        return 0,''
+    elif command.startswith('replay') and '-' in n_replay[-1]:
+        r = tuple(n_replay[-1].split('-'))
+        r = int(r[0]), int(r[1])
+        return r
+    
 def valid_command(command):
     """
     Returns a boolean indicating if the robot can understand the command or not
@@ -151,11 +178,11 @@ def valid_command(command):
     (command_name, arg1) = split_command_input(command) 
     args = arg1.split(' ')
     if len(args) == 1:
-        return command_name.lower() in valid_commands and len(arg1) == 0 or is_int(arg1) or arg1 in replay
+        return command_name.lower() in valid_commands and len(arg1) == 0 or is_int(arg1) or arg1 in replay or valid_range(arg1)
     elif len(args) == 2:
-        return command_name.lower() in valid_commands and args[0] in replay and is_int(args[1])
+        return command_name.lower() in valid_commands and args[0] in replay and is_int(args[1]) or valid_range(arg[1])
     elif len(args) == 3:
-        return command_name.lower() in valid_commands and (args[0]+' '+args[1]) in replay and is_int(args[2])
+        return command_name.lower() in valid_commands and (args[0]+' '+args[1]) in replay and is_int(args[2]) or valid_range(arg[2])
     
     
 def output(name, message):
@@ -306,7 +333,8 @@ def handle_command(robot_name, command):
     """    
     
     (command_name, arg) = split_command_input(command)   
-    
+    replay_range = number_of_replays(command)
+
     if command_name == 'off':
         return False
     elif command_name == 'help':
@@ -322,13 +350,13 @@ def handle_command(robot_name, command):
     elif command_name == 'sprint':
         (do_next, command_output) = do_sprint(robot_name, int(arg)) 
     elif arg.startswith('silent'): 
-        (do_next, command_output) = do_replay_silent(robot_name)
+        (do_next, command_output) = do_replay_silent(robot_name, replay_range)
     elif arg.startswith('reversed'):
-        (do_next, command_output) = do_replay_reversed(robot_name)
+        (do_next, command_output) = do_replay_reversed(robot_name, replay_range)
     elif arg.startswith('reversed silent'):
-        (do_next, command_output) = do_replay_reversed_silent(robot_name)
+        (do_next, command_output) = do_replay_reversed_silent(robot_name, replay_range)
     elif command_name == 'replay':
-        (do_next, command_output) = do_replay(robot_name,arg)
+        (do_next, command_output) = do_replay(robot_name, replay_range)
     print(command_output)
     show_position(robot_name)
     return do_next
