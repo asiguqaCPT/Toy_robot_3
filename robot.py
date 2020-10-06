@@ -462,14 +462,14 @@ def handle_command(robot_name, command):
 def robot_start():
     """This is the entry point for starting my robot"""  
     global position_x, position_y, current_direction_index    
-    
+    global command_list 
     robot_name = get_robot_name()
     output(robot_name, "Hello kiddo!") 
     
     position_x = 0
     position_y = 0
     current_direction_index = 0
-    
+    command_list = []    
     command = get_command(robot_name)
     while handle_command(robot_name, command):
         command = get_command(robot_name)

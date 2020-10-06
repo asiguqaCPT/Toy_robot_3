@@ -35,7 +35,7 @@ HAL: What must I do next? HAL: Shutting down..""", output)
 
         self.assertEqual("""What do you want to name your robot? HAL: Hello kiddo!
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step2_then_wrong_then_off(self):
 
         with captured_io(StringIO('HAL\nJump up\noff\n')) as (out, err):
@@ -101,7 +101,7 @@ HAL: What must I do next? HAL: Shutting down..""", output)
 HAL: What must I do next?  > HAL moved forward by 0 steps.
  > HAL now at position (0,0).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step7_back10_then_off(self):
 
         with captured_io(StringIO('HAL\nback 10\noff\n')) as (out, err):
@@ -153,7 +153,7 @@ HAL: What must I do next?  > HAL turned right.
 HAL: What must I do next?  > HAL moved back by 10 steps.
  > HAL now at position (-10,0).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step8_right_then_fwd10_then_right_then_fwd5_off(self):
 
         with captured_io(StringIO('HAL\nright\nforward 10\nright\nforward 5\noff\n')) as (out, err):
@@ -261,7 +261,7 @@ HAL: What must I do next?  > HAL moved forward by 5 steps.
  > HAL moved forward by 1 steps.
  > HAL now at position (0,15).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step2_replay_basic(self):
         with captured_io(StringIO('HAL\nforward 10\nforward 5\nreplay\noff\n')) as (out, err):
             robot.robot_start()
@@ -279,7 +279,7 @@ HAL: What must I do next?  > HAL moved forward by 10 steps.
  > HAL replayed 2 commands.
  > HAL now at position (0,30).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step2_replay_twice(self):
         with captured_io(StringIO('HAL\nforward 10\nforward 5\nreplay\nreplay\noff\n')) as (out, err):
             robot.robot_start()
@@ -304,7 +304,7 @@ HAL: What must I do next?  > HAL moved forward by 10 steps.
  > HAL replayed 2 commands.
  > HAL now at position (0,45).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_step3_replay_silent(self):
         with captured_io(StringIO('HAL\nforward 10\nforward 5\nreplay silent\noff\n')) as (out, err):
             robot.robot_start()
@@ -528,7 +528,7 @@ HAL: What must I do next?  > HAL moved forward by 2 steps.
  > HAL replayed 2 commands in reverse.
  > HAL now at position (0,11).
 HAL: What must I do next? HAL: Shutting down..""", output)
-
+    
     def test_unittest_exist(self):
         import test_robot 
         self.assertTrue('test_robot' in sys.modules, "test_robot module should be found")
@@ -537,7 +537,7 @@ HAL: What must I do next? HAL: Shutting down..""", output)
         import test_robot
         test_result = run_unittests("test_robot")
         self.assertTrue(test_result.wasSuccessful(), "unit tests should succeed")
-
+    
 
 if __name__ == '__main__':
     unittest.main()
