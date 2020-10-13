@@ -9,7 +9,7 @@ import robot
 class MyTestCase(unittest.TestCase):
     def test_update_c_history(self):
         robot.update_c_history('forward 10')
-        self.assertEquals(robot.command_list[-1], 'forward 10')
+        self.assertEqual(robot.command_list[-1], 'forward 10')
 
 
     def test_step1_then_off(self):
