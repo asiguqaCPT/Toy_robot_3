@@ -264,17 +264,17 @@ def valid_command(command):
     Returns a boolean indicating if the robot can understand the command or not
     Also checks if there is an argument to the command, and if it a valid int
     """   
-    move = ['forward','back']
+    move = ['forward','back','sprint']
     assist = ['off','help','right','left']
-    command = command.lower()
+    command = command.lower().strip()
     (command_name, arg1) = split_command_input(command) 
     args = arg1.split(' ',1)
     n_commands = command.split(' ')
-    if command_name == 'replay' and arg1 in replay or is_int(arg1) or valid_range(arg1) or len(arg1) == 0:
-        return True
-    elif command_name in move:
+    if command_name == 'replay' and (arg1 in replay or is_int(arg1) or valid_range(arg1) or len(arg1) == 0):
             return True
-    elif command_name in assist:
+    elif command_name in move and is_int(arg1):
+            return True
+    elif command_name in assist and arg1 == '':
         return True
     elif command_name == 'replay' and is_int(args[0]) or valid_range(args[0])  and args[1] in replay:
         return True
@@ -298,11 +298,23 @@ FORWARD - move forward by specified number of steps, e.g. 'FORWARD 10'
 BACK - move backward by specified number of steps, e.g. 'BACK 10'
 RIGHT - turn right by 90 degrees
 LEFT - turn left by 90 degrees
-REPLAY - replay 'movement' commands
+REPLAY - replay 'movement' commands, 
+    i.e replay (replays all commands)
+    optional flag to specify number/range of commands to replay
+    i.e replay 4 or replay 4-2 (replay with optional flags)
 REPLAY SILENT - replay without showing output for each command
+    i.e replay silent (silently replays all commands)
+    with optional flags to specify number/range of commands to replay silently
+    i.e replay 2 silent or replay 3-1 silent
 REPLAY REVERSED - replay the commands in reverse order
+    i.e replay reversed (replay all comands in reverse)
+    with optional flags to specify number/range of commands to play in reverse
+    i.e replay 2 reversed or replay 2-1 reversed
 REPLAY REVERSED SILENT - replay reversed, but only output number of commands and final position
-SPRINT - sprint forward according to a formula
+    i.e replay reversed silent (replays all commands in reversed silently)
+    with optional flags to specify number/range of commands to replay in reverse silently
+    i.e replay 2 reversed silent or replay 4-2 reversed silent
+SPRINT - sprint forward by specified number of steps i.e sprint 5
 """
 
 
@@ -429,7 +441,7 @@ def handle_command(robot_name, command):
     :return: `True` if the robot must continue after the command, or else `False` if robot must shutdown
     """    
     
-    (command_name, arg) = split_command_input(command)   
+    (command_name, arg) = split_command_input(command.strip())
     replay_range = number_of_replays(command)
 
     if command_name == 'off':
@@ -454,6 +466,7 @@ def handle_command(robot_name, command):
         (do_next, command_output) = do_replay_reversed(robot_name, replay_range)
     elif command_name == 'replay':
         (do_next, command_output) = do_replay(robot_name, replay_range)
+    
     print(command_output)
     show_position(robot_name)
     return do_next
